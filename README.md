@@ -1,1 +1,1 @@
-# Simulador-interactiu-del-marc-de-prioritzaci-
+# Simulador-interactiu-del-marc-de-prioritzacio-
