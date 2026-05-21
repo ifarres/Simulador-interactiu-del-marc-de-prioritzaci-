@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulador de priorització multicriteri</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #f8f7f4;
+  color: #2c2c2a;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+.container {
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #1a1a1a;
+}
+
+.subtitle {
+  font-size: 13px;
+  color: #73726c;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+.panel {
+  background: #fff;
+  border: 1px solid #e8e6e0;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.panel-title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888780;
+  margin-bottom: 16px;
+}
+
+.dimension {
+  margin-bottom: 16px;
+}
+
+.dimension:last-child { margin-bottom: 0; }
+
+.dim-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.dim-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #2c2c2a;
+}
+
+.dim-weight {
+  font-size: 12px;
+  font-weight: 500;
+  color: #fff;
+  background: #534AB7;
+  border-radius: 10px;
+  padding: 1px 8px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.dim-weight.cost {
+  background: #993C1D;
+}
+
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: #e8e6e0;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #534AB7;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+input[type="range"].cost-slider::-webkit-slider-thumb {
+  background: #993C1D;
+}
+
+.separator {
+  height: 1px;
+  background: #e8e6e0;
+  margin: 16px 0;
+}
+
+.sep-label {
+  font-size: 11px;
+  color: #888780;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.improvement-card {
+  background: #fff;
+  border: 1px solid #e8e6e0;
+  border-radius: 10px;
+  padding: 16px;
+  margin-bottom: 12px;
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  position: relative;
+}
+
+.improvement-card:last-child { margin-bottom: 0; }
+
+.card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.card-rank {
+  font-size: 28px;
+  font-weight: 600;
+  color: #d3d1c7;
+  line-height: 1;
+  min-width: 36px;
+  transition: all 0.3s;
+}
+
+.card-rank.top { color: #534AB7; }
+
+.card-info { flex: 1; margin-left: 12px; }
+
+.card-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 3px;
+}
+
+.card-desc {
+  font-size: 12px;
+  color: #888780;
+  line-height: 1.4;
+}
+
+.card-score {
+  text-align: right;
+  min-width: 60px;
+}
+
+.score-value {
+  font-size: 22px;
+  font-weight: 600;
+  color: #534AB7;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 11px;
+  color: #888780;
+}
+
+.card-bars {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+.bar-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bar-label {
+  font-size: 11px;
+  color: #888780;
+  min-width: 70px;
+}
+
+.bar-track {
+  flex: 1;
+  height: 4px;
+  background: #f1efe8;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  transition: width 0.4s;
+}
+
+.bar-fill.value { background: #534AB7; }
+.bar-fill.cost { background: #993C1D; }
+
+.bar-num {
+  font-size: 11px;
+  font-weight: 500;
+  color: #5f5e5a;
+  min-width: 14px;
+  text-align: right;
+}
+
+.velocity-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 8px;
+  border-radius: 6px;
+  margin-top: 10px;
+}
+
+.velocity-tag.immediate {
+  background: #EAF3DE;
+  color: #3B6D11;
+}
+
+.velocity-tag.prototype {
+  background: #E6F1FB;
+  color: #185FA5;
+}
+
+.velocity-tag.longterm {
+  background: #F1EFE8;
+  color: #5f5e5a;
+}
+
+.note {
+  font-size: 12px;
+  color: #888780;
+  margin-top: 20px;
+  padding: 12px;
+  background: #f8f7f4;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .layout { grid-template-columns: 1fr; }
+  body { padding: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Simulador de priorització multicriteri</h1>
+  <p class="subtitle">Ajusta els pesos de cada dimensió i observa com canvia l'ordre de prioritat de les millores. Les dimensions de valor es ponderen per damunt de les de cost.</p>
+
+  <div class="layout">
+    <div>
+      <div class="panel">
+        <div class="panel-title">Dimensions de valor</div>
+
+        <div class="dimension">
+          <div class="dim-header">
+            <span class="dim-label">Impacte en l'usuari</span>
+            <span class="dim-weight" id="w1-display">30%</span>
+          </div>
+          <input type="range" min="5" max="50" value="30" id="w1" oninput="update()">
+        </div>
+
+        <div class="dimension">
+          <div class="dim-header">
+            <span class="dim-label">Mesurabilitat</span>
+            <span class="dim-weight" id="w2-display">20%</span>
+          </div>
+          <input type="range" min="5" max="50" value="20" id="w2" oninput="update()">
+        </div>
+
+        <div class="dimension">
+          <div class="dim-header">
+            <span class="dim-label">Prioritat estratègica CTTI</span>
+            <span class="dim-weight" id="w3-display">25%</span>
+          </div>
+          <input type="range" min="5" max="50" value="25" id="w3" oninput="update()">
+        </div>
+
+        <div class="separator"></div>
+        <div class="sep-label">Dimensions de cost</div>
+
+        <div class="dimension">
+          <div class="dim-header">
+            <span class="dim-label">Assequibilitat</span>
+            <span class="dim-weight cost" id="w4-display">10%</span>
+          </div>
+          <input type="range" class="cost-slider" min="5" max="30" value="10" id="w4" oninput="update()">
+        </div>
+
+        <div class="dimension">
+          <div class="dim-header">
+            <span class="dim-label">Cost-esforç (invers)</span>
+            <span class="dim-weight cost" id="w5-display">5%</span>
+          </div>
+          <input type="range" class="cost-slider" min="5" max="30" value="5" id="w5" oninput="update()">
+        </div>
+
+        <div class="dimension">
+          <div class="dim-header">
+            <span class="dim-label">Termini de retorn</span>
+            <span class="dim-weight cost" id="w6-display">10%</span>
+          </div>
+          <input type="range" class="cost-slider" min="5" max="30" value="10" id="w6" oninput="update()">
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="results-header">
+        <div class="panel-title" style="margin-bottom:0">Backlog de millores prioritzat</div>
+      </div>
+      <div id="results"></div>
+      <div class="note">
+        Les dimensions de valor (violeta) es ponderen per damunt de les de cost (taronja). Això és una decisió de disseny deliberada: en un servei orientat a l'experiència de l'usuari, les propostes amb alt impacte han de destacar per davant de les simplement fàcils d'executar.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const improvements = [
+  {
+    name: "Simplificació formulari de peticions",
+    desc: "Camp de text lliure com a primer pas en lloc de formulari multi-camp",
+    scores: [9, 8, 7, 9, 8, 9],
+    velocity: "immediate"
+  },
+  {
+    name: "Intercepció KMDB al portal",
+    desc: "Suggeriment d'articles de solució quan l'usuari escriu el títol del tiquet",
+    scores: [8, 9, 8, 7, 6, 7],
+    velocity: "prototype"
+  },
+  {
+    name: "Agent virtual amb accés a KMDB",
+    desc: "Evolució de l'agent virtual amb resolució autònoma en llenguatge natural",
+    scores: [7, 7, 9, 5, 4, 5],
+    velocity: "prototype"
+  },
+  {
+    name: "Alertes predictives per proveïdor",
+    desc: "Avisos automàtics quan un indicador mostra degradació silenciosa",
+    scores: [6, 9, 8, 8, 7, 6],
+    velocity: "prototype"
+  },
+  {
+    name: "Redisseny catàleg amb card sorting",
+    desc: "Reorganització de l'arbre de categories segons el model mental de l'usuari",
+    scores: [8, 6, 6, 6, 5, 4],
+    velocity: "longterm"
+  }
+];
+
+const velocityLabels = {
+  immediate: "Execució immediata",
+  prototype: "Cicle de prototipatge",
+  longterm: "Llarg termini"
+};
+
+function update() {
+  const raw = [
+    +document.getElementById('w1').value,
+    +document.getElementById('w2').value,
+    +document.getElementById('w3').value,
+    +document.getElementById('w4').value,
+    +document.getElementById('w5').value,
+    +document.getElementById('w6').value
+  ];
+  const total = raw.reduce((a, b) => a + b, 0);
+  const weights = raw.map(r => r / total);
+
+  for (let i = 1; i <= 6; i++) {
+    document.getElementById(`w${i}-display`).textContent = Math.round(weights[i-1] * 100) + '%';
+  }
+
+  const scored = improvements.map((imp, idx) => {
+    const score = imp.scores.reduce((sum, s, i) => sum + s * weights[i], 0);
+    return { ...imp, totalScore: score, originalIdx: idx };
+  });
+
+  scored.sort((a, b) => b.totalScore - a.totalScore);
+
+  const container = document.getElementById('results');
+  container.innerHTML = scored.map((imp, rank) => {
+    const dimLabels = ['Impacte', 'Mesurabilitat', 'Prioritat', 'Assequibilitat', 'Cost-esforç', 'Retorn'];
+    const barsHtml = imp.scores.map((s, i) => {
+      const isValue = i < 3;
+      return `<div class="bar-item">
+        <span class="bar-label">${dimLabels[i]}</span>
+        <div class="bar-track"><div class="bar-fill ${isValue ? 'value' : 'cost'}" style="width:${s*10}%"></div></div>
+        <span class="bar-num">${s}</span>
+      </div>`;
+    }).join('');
+
+    return `<div class="improvement-card" style="order:${rank}">
+      <div class="card-top">
+        <div class="card-rank ${rank === 0 ? 'top' : ''}">${rank + 1}</div>
+        <div class="card-info">
+          <div class="card-name">${imp.name}</div>
+          <div class="card-desc">${imp.desc}</div>
+        </div>
+        <div class="card-score">
+          <div class="score-value">${imp.totalScore.toFixed(1)}</div>
+          <div class="score-label">punts</div>
+        </div>
+      </div>
+      <div class="card-bars">${barsHtml}</div>
+      <span class="velocity-tag ${imp.velocity}">${velocityLabels[imp.velocity]}</span>
+    </div>`;
+  }).join('');
+}
+
+update();
+</script>
+
+</body>
+</html>
