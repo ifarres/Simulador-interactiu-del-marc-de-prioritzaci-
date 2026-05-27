@@ -3,458 +3,565 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Simulador de priorització multicriteri</title>
+<title>Simulador de priorització multicriteri · CTTI-2026-123</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --red: #C31E2C;
+  --red-dark: #9E1823;
+  --red-light: #FDEBED;
+  --dark: #111111;
+  --gray-900: #1F1F1F;
+  --gray-800: #333333;
+  --gray-700: #555555;
+  --gray-500: #888888;
+  --gray-400: #AAAAAA;
+  --gray-200: #E0E0E0;
+  --gray-100: #F4F4F4;
+  --gray-50: #FAFAFA;
+  --white: #FFFFFF;
+  --blue: #0066CC;
+  --blue-bg: #EBF3FC;
+  --green: #1A7A2E;
+  --green-bg: #E6F4EA;
+  --amber: #C65D00;
+  --amber-bg: #FFF4E6;
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --r: 10px;
+  --r-lg: 14px;
+}
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #ECEAE5; color: var(--dark); min-height: 100vh; }
 
-body {
-  font-family: 'DM Sans', sans-serif;
-  background: #f8f7f4;
-  color: #2c2c2a;
-  padding: 24px;
-  min-height: 100vh;
+/* ===== HEADER ===== */
+.header {
+  background: var(--white);
+  border-bottom: 4px solid var(--red);
+  padding: 0 32px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  box-shadow: var(--shadow-sm);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.container {
-  max-width: 960px;
-  margin: 0 auto;
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-right: 24px;
+  border-right: 1px solid var(--gray-200);
+  height: 44px;
 }
 
-h1 {
-  font-size: 20px;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #1a1a1a;
+/* Escut Generalitat — 4 barres */
+.escut {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
 }
 
-.subtitle {
-  font-size: 13px;
-  color: #73726c;
+.logo-texts { display: flex; flex-direction: column; gap: 0; white-space: nowrap; }
+.logo-l1 { font-size: 11px; font-weight: 400; color: var(--gray-800); line-height: 1.35; }
+.logo-l2 { font-size: 11px; font-weight: 700; color: var(--dark); line-height: 1.35; }
+.logo-l3 { font-size: 11px; font-weight: 700; color: var(--dark); line-height: 1.35; }
+
+.header-center { flex: 1; }
+.header-center h1 { font-size: 17px; font-weight: 700; color: var(--dark); letter-spacing: -0.3px; }
+.header-center .ref { font-size: 11px; color: var(--gray-500); font-weight: 400; margin-top: 2px; }
+
+.header-badge {
+  background: var(--red-light);
+  color: var(--red);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  white-space: nowrap;
+}
+
+/* ===== MAIN ===== */
+.main { max-width: 1120px; margin: 0 auto; padding: 28px 24px; }
+
+.intro-bar {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  padding: 18px 24px;
   margin-bottom: 24px;
-  line-height: 1.5;
+  box-shadow: var(--shadow-xs);
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.7;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.intro-icon {
+  flex-shrink: 0;
+  width: 22px;
+  height: 22px;
+  background: var(--red);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  margin-top: 1px;
 }
 
 .layout {
   display: grid;
-  grid-template-columns: 280px 1fr;
+  grid-template-columns: 310px 1fr;
   gap: 24px;
   align-items: start;
 }
 
+/* ===== PANEL ===== */
 .panel {
-  background: #fff;
-  border: 1px solid #e8e6e0;
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  position: sticky;
+  top: 100px;
 }
 
-.panel-title {
-  font-size: 13px;
+.panel-head {
+  background: var(--gray-900);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.panel-head-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--white);
+}
+
+.btn-reset {
+  font-family: inherit;
+  font-size: 10px;
   font-weight: 600;
+  color: var(--gray-400);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 5px;
+  padding: 4px 12px;
+  cursor: pointer;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: #888780;
-  margin-bottom: 16px;
+  transition: all 0.15s;
 }
 
-.dimension {
+.btn-reset:hover { background: rgba(255,255,255,0.08); color: var(--white); border-color: rgba(255,255,255,0.3); }
+
+.panel-body { padding: 22px 20px; }
+
+.section-tag {
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
   margin-bottom: 16px;
-}
-
-.dimension:last-child { margin-bottom: 0; }
-
-.dim-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  gap: 8px;
 }
 
-.dim-label {
-  font-size: 13px;
-  font-weight: 500;
-  color: #2c2c2a;
-}
+.section-tag::after { content:''; flex:1; height:1px; background: var(--gray-100); }
+.section-tag.val { color: var(--red); }
+.section-tag.cst { color: var(--amber); }
 
-.dim-weight {
-  font-size: 12px;
-  font-weight: 500;
-  color: #fff;
-  background: #534AB7;
+.dot-val, .dot-cst { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+.dot-val { background: var(--red); }
+.dot-cst { background: var(--amber); }
+
+.dim { margin-bottom: 20px; }
+.dim:last-child { margin-bottom: 0; }
+
+.dim-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+
+.dim-name { font-size: 13px; font-weight: 500; color: var(--gray-800); }
+
+.dim-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--white);
   border-radius: 10px;
-  padding: 1px 8px;
-  min-width: 32px;
+  padding: 2px 10px;
+  min-width: 42px;
   text-align: center;
+  transition: all 0.15s;
 }
 
-.dim-weight.cost {
-  background: #993C1D;
-}
+.dim-pct.val-bg { background: var(--red); }
+.dim-pct.cst-bg { background: var(--amber); }
 
 input[type="range"] {
   -webkit-appearance: none;
   width: 100%;
-  height: 4px;
-  border-radius: 2px;
-  background: #e8e6e0;
+  height: 5px;
+  border-radius: 3px;
+  background: var(--gray-100);
   outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
 }
+
+input[type="range"]:hover { background: var(--gray-200); }
 
 input[type="range"]::-webkit-slider-thumb {
   -webkit-appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
-  background: #534AB7;
-  cursor: pointer;
-  border: 2px solid #fff;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  background: var(--white);
+  border: 3px solid var(--red);
+  cursor: grab;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s, transform 0.1s;
 }
 
-input[type="range"].cost-slider::-webkit-slider-thumb {
-  background: #993C1D;
-}
+input[type="range"]::-webkit-slider-thumb:hover { box-shadow: var(--shadow-md); transform: scale(1.08); }
+input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(0.95); }
+input[type="range"].cst-s::-webkit-slider-thumb { border-color: var(--amber); }
 
-.separator {
-  height: 1px;
-  background: #e8e6e0;
-  margin: 16px 0;
-}
+.panel-div { height:1px; background:var(--gray-100); margin: 22px 0; }
 
-.sep-label {
-  font-size: 11px;
-  color: #888780;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  margin-bottom: 12px;
-  font-weight: 500;
-}
-
-.results-header {
+/* Total weight indicator */
+.weight-total {
+  margin-top: 20px;
+  padding: 12px 16px;
+  background: var(--gray-50);
+  border-radius: var(--r);
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.weight-total-label { font-size: 11px; color: var(--gray-500); font-weight: 500; }
+
+.weight-bar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  width: 160px;
+  background: var(--gray-100);
+}
+
+.weight-bar-val { background: var(--red); transition: width 0.3s; }
+.weight-bar-cst { background: var(--amber); transition: width 0.3s; }
+
+.weight-pcts { display: flex; gap: 8px; margin-top: 6px; justify-content: flex-end; }
+.weight-pct-item { font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+.weight-pct-item.val { color: var(--red); }
+.weight-pct-item.cst { color: var(--amber); }
+
+/* ===== RESULTS ===== */
+.results-area { min-width: 0; }
+
+.results-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
   margin-bottom: 16px;
 }
 
-.improvement-card {
-  background: #fff;
-  border: 1px solid #e8e6e0;
-  border-radius: 10px;
-  padding: 16px;
-  margin-bottom: 12px;
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  position: relative;
+.results-title { font-size: 13px; font-weight: 700; color: var(--dark); text-transform: uppercase; letter-spacing: 0.5px; }
+.results-sub { font-size: 12px; color: var(--gray-500); }
+
+#results { display: flex; flex-direction: column; gap: 14px; }
+
+/* Card */
+.card {
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  border: 2px solid transparent;
 }
 
-.improvement-card:last-child { margin-bottom: 0; }
+.card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.card.is-top { border-color: var(--red); box-shadow: var(--shadow-md); }
 
-.card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 10px;
-}
+.card-accent { height: 4px; }
+.card-accent.r1 { background: linear-gradient(90deg, var(--red), var(--red-dark)); }
+.card-accent.r2 { background: var(--red); opacity: 0.5; }
+.card-accent.r3 { background: var(--gray-200); }
+.card-accent.r4 { background: var(--gray-200); }
+.card-accent.r5 { background: var(--gray-100); }
 
-.card-rank {
-  font-size: 28px;
-  font-weight: 600;
-  color: #d3d1c7;
+.card-inner { padding: 18px 22px; }
+
+.card-row1 { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+
+.card-pos {
+  font-size: 36px;
+  font-weight: 800;
   line-height: 1;
-  min-width: 36px;
-  transition: all 0.3s;
+  min-width: 44px;
+  color: var(--gray-200);
+  transition: color 0.3s;
+  letter-spacing: -2px;
 }
 
-.card-rank.top { color: #534AB7; }
+.card-pos.top { color: var(--red); }
 
-.card-info { flex: 1; margin-left: 12px; }
+.card-mid { flex: 1; min-width: 0; }
+.card-title { font-size: 15px; font-weight: 700; color: var(--dark); margin-bottom: 4px; letter-spacing: -0.2px; }
+.card-sub { font-size: 12px; color: var(--gray-500); line-height: 1.55; }
 
-.card-name {
-  font-size: 14px;
-  font-weight: 600;
-  color: #1a1a1a;
-  margin-bottom: 3px;
-}
+.card-pts { text-align: right; flex-shrink: 0; padding-left: 8px; }
+.card-pts-num { font-size: 32px; font-weight: 800; color: var(--red); line-height: 1; letter-spacing: -1px; }
+.card-pts-den { font-size: 12px; color: var(--gray-400); font-weight: 500; }
 
-.card-desc {
-  font-size: 12px;
-  color: #888780;
-  line-height: 1.4;
-}
-
-.card-score {
-  text-align: right;
-  min-width: 60px;
-}
-
-.score-value {
-  font-size: 22px;
-  font-weight: 600;
-  color: #534AB7;
-  line-height: 1;
-}
-
-.score-label {
-  font-size: 11px;
-  color: #888780;
-}
-
-.card-bars {
+/* Dimension bars */
+.card-dims {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6px;
+  gap: 7px 20px;
+  padding: 16px 0;
+  border-top: 1px solid var(--gray-100);
+  border-bottom: 1px solid var(--gray-100);
 }
 
-.bar-item {
+.dim-bar { display: flex; align-items: center; gap: 8px; }
+.dim-bar-label { font-size: 11px; color: var(--gray-500); min-width: 78px; flex-shrink: 0; }
+.dim-bar-track { flex:1; height:6px; background:var(--gray-100); border-radius:3px; overflow:hidden; min-width:50px; }
+.dim-bar-fill { height:100%; border-radius:3px; transition: width 0.4s cubic-bezier(0.25,0.46,0.45,0.94); }
+.dim-bar-fill.v { background: var(--red); }
+.dim-bar-fill.c { background: var(--amber); }
+.dim-bar-n { font-size: 12px; font-weight: 600; color: var(--gray-700); min-width: 16px; text-align: right; }
+
+/* Footer row */
+.card-foot {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  padding-top: 14px;
+}
+
+.vel {
+  display: inline-flex;
+  align-items: center;
   gap: 6px;
-}
-
-.bar-label {
   font-size: 11px;
-  color: #888780;
-  min-width: 70px;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
 }
 
-.bar-track {
-  flex: 1;
-  height: 4px;
-  background: #f1efe8;
-  border-radius: 2px;
-  overflow: hidden;
-}
+.vel svg { width:14px; height:14px; }
+.vel.imm { background: var(--green-bg); color: var(--green); }
+.vel.pro { background: var(--blue-bg); color: var(--blue); }
+.vel.lng { background: var(--gray-100); color: var(--gray-700); }
 
-.bar-fill {
-  height: 100%;
-  border-radius: 2px;
-  transition: width 0.4s;
-}
+.card-breakdown { font-size: 11px; color: var(--gray-400); font-weight: 500; }
+.card-breakdown b { color: var(--gray-700); font-weight: 600; }
 
-.bar-fill.value { background: #534AB7; }
-.bar-fill.cost { background: #993C1D; }
-
-.bar-num {
-  font-size: 11px;
-  font-weight: 500;
-  color: #5f5e5a;
-  min-width: 14px;
-  text-align: right;
-}
-
-.velocity-tag {
-  display: inline-block;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 2px 8px;
-  border-radius: 6px;
-  margin-top: 10px;
-}
-
-.velocity-tag.immediate {
-  background: #EAF3DE;
-  color: #3B6D11;
-}
-
-.velocity-tag.prototype {
-  background: #E6F1FB;
-  color: #185FA5;
-}
-
-.velocity-tag.longterm {
-  background: #F1EFE8;
-  color: #5f5e5a;
-}
-
-.note {
+/* ===== FOOTER ===== */
+.footer-note {
+  margin-top: 28px;
+  padding: 16px 22px;
+  background: var(--white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
   font-size: 12px;
-  color: #888780;
-  margin-top: 20px;
-  padding: 12px;
-  background: #f8f7f4;
-  border-radius: 8px;
-  line-height: 1.5;
+  color: var(--gray-700);
+  line-height: 1.7;
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
 }
 
-@media (max-width: 700px) {
+.footer-note svg { flex-shrink:0; width:18px; height:18px; color:var(--red); margin-top:2px; }
+.footer-note strong { color: var(--dark); }
+
+/* Responsive */
+@media (max-width: 820px) {
   .layout { grid-template-columns: 1fr; }
-  body { padding: 16px; }
+  .header { padding: 0 16px; height: auto; padding: 12px 16px; flex-wrap: wrap; gap: 12px; }
+  .main { padding: 16px 12px; }
+  .panel { position: static; }
+  .header-badge { display: none; }
+  .card-dims { grid-template-columns: 1fr; }
 }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Simulador de priorització multicriteri</h1>
-  <p class="subtitle">Ajusta els pesos de cada dimensió i observa com canvia l'ordre de prioritat de les millores. Les dimensions de valor es ponderen per damunt de les de cost.</p>
+<header class="header">
+  <div class="logo-area">
+    <svg class="escut" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Escut Generalitat monocrom -->
+      <path d="M5 5 H55 V42 Q30 58 5 42 Z" fill="none" stroke="var(--dark)" stroke-width="2.5"/>
+      <rect x="13" y="10" width="5" height="36" rx="1" fill="var(--dark)"/>
+      <rect x="23" y="10" width="5" height="36" rx="1" fill="var(--dark)"/>
+      <rect x="33" y="10" width="5" height="36" rx="1" fill="var(--dark)"/>
+      <rect x="43" y="10" width="5" height="36" rx="1" fill="var(--dark)"/>
+    </svg>
+    <div class="logo-texts">
+      <span class="logo-l1">Generalitat de Catalunya</span>
+      <span class="logo-l2">Centre de Telecomunicacions</span>
+      <span class="logo-l3">i Tecnologies de la Informació</span>
+    </div>
+  </div>
+  <div class="header-center">
+    <h1>Simulador de priorització multicriteri</h1>
+    <div class="ref">CTTI-2026-123 · Servei de suport a la millora dels processos TIC</div>
+  </div>
+  <div class="header-badge">Interactiu</div>
+</header>
+
+<div class="main">
+  <div class="intro-bar">
+    <div class="intro-icon">?</div>
+    <p>Ajusteu els pesos de les sis dimensions i observeu com es reordena el backlog de millores. Les dimensions de <b style="color:var(--red)">valor</b> es ponderen per damunt de les de <b style="color:var(--amber)">cost</b>: en un servei orientat a l'experiència de l'usuari, les propostes amb alt impacte han de destacar per davant de les simplement fàcils d'executar.</p>
+  </div>
 
   <div class="layout">
-    <div>
-      <div class="panel">
-        <div class="panel-title">Dimensions de valor</div>
 
-        <div class="dimension">
-          <div class="dim-header">
-            <span class="dim-label">Impacte en l'usuari</span>
-            <span class="dim-weight" id="w1-display">30%</span>
+    <!-- CONTROLS -->
+    <div class="panel">
+      <div class="panel-head">
+        <span class="panel-head-title">Pesos de les dimensions</span>
+        <button class="btn-reset" onclick="resetWeights()">↺ Reiniciar</button>
+      </div>
+      <div class="panel-body">
+        <div class="section-tag val"><span class="dot-val"></span> Dimensions de valor</div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Impacte en l'usuari</span><span class="dim-pct val-bg" id="w1d">30%</span></div><input type="range" min="5" max="50" value="30" id="w1" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Mesurabilitat</span><span class="dim-pct val-bg" id="w2d">20%</span></div><input type="range" min="5" max="50" value="20" id="w2" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Prioritat estratègica CTTI</span><span class="dim-pct val-bg" id="w3d">25%</span></div><input type="range" min="5" max="50" value="25" id="w3" oninput="update()"></div>
+
+        <div class="panel-div"></div>
+
+        <div class="section-tag cst"><span class="dot-cst"></span> Dimensions de cost</div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Assequibilitat</span><span class="dim-pct cst-bg" id="w4d">10%</span></div><input type="range" class="cst-s" min="5" max="30" value="10" id="w4" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Cost-esforç (invers)</span><span class="dim-pct cst-bg" id="w5d">5%</span></div><input type="range" class="cst-s" min="5" max="30" value="5" id="w5" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Termini de retorn</span><span class="dim-pct cst-bg" id="w6d">10%</span></div><input type="range" class="cst-s" min="5" max="30" value="10" id="w6" oninput="update()"></div>
+
+        <div class="weight-total">
+          <span class="weight-total-label">Distribució valor / cost</span>
+          <div>
+            <div class="weight-bar"><div class="weight-bar-val" id="wb-val"></div><div class="weight-bar-cst" id="wb-cst"></div></div>
+            <div class="weight-pcts">
+              <span class="weight-pct-item val" id="wp-val">75%</span>
+              <span class="weight-pct-item cst" id="wp-cst">25%</span>
+            </div>
           </div>
-          <input type="range" min="5" max="50" value="30" id="w1" oninput="update()">
-        </div>
-
-        <div class="dimension">
-          <div class="dim-header">
-            <span class="dim-label">Mesurabilitat</span>
-            <span class="dim-weight" id="w2-display">20%</span>
-          </div>
-          <input type="range" min="5" max="50" value="20" id="w2" oninput="update()">
-        </div>
-
-        <div class="dimension">
-          <div class="dim-header">
-            <span class="dim-label">Prioritat estratègica CTTI</span>
-            <span class="dim-weight" id="w3-display">25%</span>
-          </div>
-          <input type="range" min="5" max="50" value="25" id="w3" oninput="update()">
-        </div>
-
-        <div class="separator"></div>
-        <div class="sep-label">Dimensions de cost</div>
-
-        <div class="dimension">
-          <div class="dim-header">
-            <span class="dim-label">Assequibilitat</span>
-            <span class="dim-weight cost" id="w4-display">10%</span>
-          </div>
-          <input type="range" class="cost-slider" min="5" max="30" value="10" id="w4" oninput="update()">
-        </div>
-
-        <div class="dimension">
-          <div class="dim-header">
-            <span class="dim-label">Cost-esforç (invers)</span>
-            <span class="dim-weight cost" id="w5-display">5%</span>
-          </div>
-          <input type="range" class="cost-slider" min="5" max="30" value="5" id="w5" oninput="update()">
-        </div>
-
-        <div class="dimension">
-          <div class="dim-header">
-            <span class="dim-label">Termini de retorn</span>
-            <span class="dim-weight cost" id="w6-display">10%</span>
-          </div>
-          <input type="range" class="cost-slider" min="5" max="30" value="10" id="w6" oninput="update()">
         </div>
       </div>
     </div>
 
-    <div>
-      <div class="results-header">
-        <div class="panel-title" style="margin-bottom:0">Backlog de millores prioritzat</div>
+    <!-- RESULTS -->
+    <div class="results-area">
+      <div class="results-head">
+        <span class="results-title">Backlog de millores prioritzat</span>
+        <span class="results-sub">5 propostes · ordenades per puntuació</span>
       </div>
       <div id="results"></div>
-      <div class="note">
-        Les dimensions de valor (violeta) es ponderen per damunt de les de cost (taronja). Això és una decisió de disseny deliberada: en un servei orientat a l'experiència de l'usuari, les propostes amb alt impacte han de destacar per davant de les simplement fàcils d'executar.
-      </div>
     </div>
+
+  </div>
+
+  <div class="footer-note">
+    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+    <p><strong>Nota metodològica.</strong> Les puntuacions de cada millora són il·lustratives. En la fase d'execució, cada proposta es puntuarà conjuntament entre l'equip adjudicatari i el CTTI, assegurant que la priorització reflecteixi les necessitats reals del servei. La velocitat d'execució (immediata, prototipatge o llarg termini) determina el circuit que segueix cada millora dins de l'embut d'innovació descrit a l'apartat 3.2.</p>
   </div>
 </div>
 
 <script>
-const improvements = [
-  {
-    name: "Simplificació formulari de peticions",
-    desc: "Camp de text lliure com a primer pas en lloc de formulari multi-camp",
-    scores: [9, 8, 7, 9, 8, 9],
-    velocity: "immediate"
-  },
-  {
-    name: "Intercepció KMDB al portal",
-    desc: "Suggeriment d'articles de solució quan l'usuari escriu el títol del tiquet",
-    scores: [8, 9, 8, 7, 6, 7],
-    velocity: "prototype"
-  },
-  {
-    name: "Agent virtual amb accés a KMDB",
-    desc: "Evolució de l'agent virtual amb resolució autònoma en llenguatge natural",
-    scores: [7, 7, 9, 5, 4, 5],
-    velocity: "prototype"
-  },
-  {
-    name: "Alertes predictives per proveïdor",
-    desc: "Avisos automàtics quan un indicador mostra degradació silenciosa",
-    scores: [6, 9, 8, 8, 7, 6],
-    velocity: "prototype"
-  },
-  {
-    name: "Redisseny catàleg amb card sorting",
-    desc: "Reorganització de l'arbre de categories segons el model mental de l'usuari",
-    scores: [8, 6, 6, 6, 5, 4],
-    velocity: "longterm"
-  }
+const items = [
+  { name:"Simplificació del formulari de peticions", desc:"Substituir el formulari multi-camp per un camp de text lliure com a primer pas, amb categorització automàtica posterior", scores:[9,8,7,9,8,9], vel:"imm" },
+  { name:"Intercepció KMDB al portal d'autoservei", desc:"Suggeriment intel·ligent d'articles de solució mentre l'usuari descriu la seva necessitat, abans d'obrir el tiquet", scores:[8,9,8,7,6,7], vel:"pro" },
+  { name:"Agent virtual amb resolució autònoma", desc:"Evolució de l'agent virtual actual amb accés a la KMDB per resoldre consultes en llenguatge natural sense intervenció humana", scores:[7,7,9,5,4,5], vel:"pro" },
+  { name:"Alertes predictives per proveïdor", desc:"Detecció automàtica de degradació silenciosa d'indicadors mitjançant sèries temporals i generació d'alertes en zona àmbar", scores:[6,9,8,8,7,6], vel:"pro" },
+  { name:"Redisseny del catàleg amb card sorting", desc:"Reorganització de l'arbre de categories i nomenclatura del catàleg segons el model mental dels usuaris reals", scores:[8,6,6,6,5,4], vel:"lng" }
 ];
 
-const velocityLabels = {
-  immediate: "Execució immediata",
-  prototype: "Cicle de prototipatge",
-  longterm: "Llarg termini"
+const velLabel = { imm:"Execució immediata", pro:"Cicle de prototipatge", lng:"Llarg termini" };
+const velIcon = {
+  imm:`<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.381z" clip-rule="evenodd"/></svg>`,
+  pro:`<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/></svg>`,
+  lng:`<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>`
 };
 
+const dLabels = ['Impacte','Mesurabilitat','Prioritat','Assequibilitat','Cost-esforç','Retorn'];
+const defaults = [30,20,25,10,5,10];
+
+function resetWeights() { defaults.forEach((v,i)=>{ document.getElementById(`w${i+1}`).value=v; }); update(); }
+
 function update() {
-  const raw = [
-    +document.getElementById('w1').value,
-    +document.getElementById('w2').value,
-    +document.getElementById('w3').value,
-    +document.getElementById('w4').value,
-    +document.getElementById('w5').value,
-    +document.getElementById('w6').value
-  ];
-  const total = raw.reduce((a, b) => a + b, 0);
-  const weights = raw.map(r => r / total);
+  const raw = [1,2,3,4,5,6].map(i => +document.getElementById(`w${i}`).value);
+  const total = raw.reduce((a,b)=>a+b,0);
+  const w = raw.map(r=>r/total);
 
-  for (let i = 1; i <= 6; i++) {
-    document.getElementById(`w${i}-display`).textContent = Math.round(weights[i-1] * 100) + '%';
-  }
+  for (let i=1;i<=6;i++) document.getElementById(`w${i}d`).textContent = Math.round(w[i-1]*100)+'%';
 
-  const scored = improvements.map((imp, idx) => {
-    const score = imp.scores.reduce((sum, s, i) => sum + s * weights[i], 0);
-    return { ...imp, totalScore: score, originalIdx: idx };
-  });
+  // Weight distribution bar
+  const valPct = Math.round((w[0]+w[1]+w[2])*100);
+  const cstPct = 100 - valPct;
+  document.getElementById('wb-val').style.width = valPct+'%';
+  document.getElementById('wb-cst').style.width = cstPct+'%';
+  document.getElementById('wp-val').textContent = valPct+'% valor';
+  document.getElementById('wp-cst').textContent = cstPct+'% cost';
 
-  scored.sort((a, b) => b.totalScore - a.totalScore);
+  const scored = items.map(it => ({ ...it, total: it.scores.reduce((s,sc,i)=>s+sc*w[i],0) }));
+  scored.sort((a,b) => b.total - a.total);
 
-  const container = document.getElementById('results');
-  container.innerHTML = scored.map((imp, rank) => {
-    const dimLabels = ['Impacte', 'Mesurabilitat', 'Prioritat', 'Assequibilitat', 'Cost-esforç', 'Retorn'];
-    const barsHtml = imp.scores.map((s, i) => {
-      const isValue = i < 3;
-      return `<div class="bar-item">
-        <span class="bar-label">${dimLabels[i]}</span>
-        <div class="bar-track"><div class="bar-fill ${isValue ? 'value' : 'cost'}" style="width:${s*10}%"></div></div>
-        <span class="bar-num">${s}</span>
-      </div>`;
-    }).join('');
+  document.getElementById('results').innerHTML = scored.map((it,rk) => {
+    const top = rk===0;
+    const bars = it.scores.map((s,i) =>
+      `<div class="dim-bar"><span class="dim-bar-label">${dLabels[i]}</span><div class="dim-bar-track"><div class="dim-bar-fill ${i<3?'v':'c'}" style="width:${s*10}%"></div></div><span class="dim-bar-n">${s}</span></div>`
+    ).join('');
 
-    return `<div class="improvement-card" style="order:${rank}">
-      <div class="card-top">
-        <div class="card-rank ${rank === 0 ? 'top' : ''}">${rank + 1}</div>
-        <div class="card-info">
-          <div class="card-name">${imp.name}</div>
-          <div class="card-desc">${imp.desc}</div>
+    const vPart = it.scores.slice(0,3).reduce((s,sc,i)=>s+sc*w[i],0).toFixed(1);
+    const cPart = it.scores.slice(3).reduce((s,sc,i)=>s+sc*w[i+3],0).toFixed(1);
+
+    return `<div class="card ${top?'is-top':''}">
+      <div class="card-accent r${rk+1}"></div>
+      <div class="card-inner">
+        <div class="card-row1">
+          <div class="card-pos ${top?'top':''}">${rk+1}</div>
+          <div class="card-mid">
+            <div class="card-title">${it.name}</div>
+            <div class="card-sub">${it.desc}</div>
+          </div>
+          <div class="card-pts">
+            <div class="card-pts-num">${it.total.toFixed(1)}</div>
+            <div class="card-pts-den">/ 10</div>
+          </div>
         </div>
-        <div class="card-score">
-          <div class="score-value">${imp.totalScore.toFixed(1)}</div>
-          <div class="score-label">punts</div>
+        <div class="card-dims">${bars}</div>
+        <div class="card-foot">
+          <span class="vel ${it.vel}">${velIcon[it.vel]} ${velLabel[it.vel]}</span>
+          <span class="card-breakdown"><b>${vPart}</b> valor · <b>${cPart}</b> cost</span>
         </div>
       </div>
-      <div class="card-bars">${barsHtml}</div>
-      <span class="velocity-tag ${imp.velocity}">${velocityLabels[imp.velocity]}</span>
     </div>`;
   }).join('');
 }
 
 update();
 </script>
-
 </body>
 </html>
