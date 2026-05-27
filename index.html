@@ -196,9 +196,11 @@ body { font-family: 'Inter', sans-serif; background: #ECEAE5; color: var(--dark)
 .dim { margin-bottom: 20px; }
 .dim:last-child { margin-bottom: 0; }
 
-.dim-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.dim-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
 
 .dim-name { font-size: 13px; font-weight: 500; color: var(--gray-800); }
+
+.dim-hint { font-size: 11px; color: var(--gray-400); line-height: 1.4; margin-bottom: 8px; }
 
 .dim-pct {
   font-size: 11px;
@@ -435,7 +437,7 @@ input[type="range"].cst-s::-webkit-slider-thumb { border-color: var(--amber); }
 <div class="main">
   <div class="intro-bar">
     <div class="intro-icon">?</div>
-    <p>Ajusteu els pesos de les sis dimensions i observeu com es reordena el backlog de millores. Les dimensions de <b style="color:var(--red)">valor</b> es ponderen per damunt de les de <b style="color:var(--amber)">cost</b>: en un servei orientat a l'experiència de l'usuari, les propostes amb alt impacte han de destacar per davant de les simplement fàcils d'executar.</p>
+    <p>Ajusteu els pesos de les sis dimensions i observeu com es reordena el backlog de millores. Tres dimensions avaluen el <b style="color:var(--red)">valor</b> de cada proposta (univers d'usuaris afectats, millora de l'experiència, encaix estratègic) i tres n'avaluen el <b style="color:var(--amber)">cost</b> (disponibilitat de recursos, esforç i termini de retorn). Les dimensions de valor es ponderen per damunt per assegurar que les millores amb alt impacte no quedin enterrades per la comoditat d'execució.</p>
   </div>
 
   <div class="layout">
@@ -448,16 +450,16 @@ input[type="range"].cst-s::-webkit-slider-thumb { border-color: var(--amber); }
       </div>
       <div class="panel-body">
         <div class="section-tag val"><span class="dot-val"></span> Dimensions de valor</div>
-        <div class="dim"><div class="dim-top"><span class="dim-name">Impacte en l'usuari</span><span class="dim-pct val-bg" id="w1d">30%</span></div><input type="range" min="5" max="50" value="30" id="w1" oninput="update()"></div>
-        <div class="dim"><div class="dim-top"><span class="dim-name">Mesurabilitat</span><span class="dim-pct val-bg" id="w2d">20%</span></div><input type="range" min="5" max="50" value="20" id="w2" oninput="update()"></div>
-        <div class="dim"><div class="dim-top"><span class="dim-name">Prioritat estratègica CTTI</span><span class="dim-pct val-bg" id="w3d">25%</span></div><input type="range" min="5" max="50" value="25" id="w3" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Univers d'usuaris afectats</span><span class="dim-pct val-bg" id="w1d">30%</span></div><div class="dim-hint">Quants usuaris se'n beneficien</div><input type="range" min="5" max="50" value="30" id="w1" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Millora de l'experiència</span><span class="dim-pct val-bg" id="w2d">20%</span></div><div class="dim-hint">Benefici quantificable amb indicadors existents</div><input type="range" min="5" max="50" value="20" id="w2" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Encaix estratègic CTTI</span><span class="dim-pct val-bg" id="w3d">25%</span></div><div class="dim-hint">Alineació amb les prioritats del CTTI en cada moment</div><input type="range" min="5" max="50" value="25" id="w3" oninput="update()"></div>
 
         <div class="panel-div"></div>
 
         <div class="section-tag cst"><span class="dot-cst"></span> Dimensions de cost</div>
-        <div class="dim"><div class="dim-top"><span class="dim-name">Assequibilitat</span><span class="dim-pct cst-bg" id="w4d">10%</span></div><input type="range" class="cst-s" min="5" max="30" value="10" id="w4" oninput="update()"></div>
-        <div class="dim"><div class="dim-top"><span class="dim-name">Cost-esforç (invers)</span><span class="dim-pct cst-bg" id="w5d">5%</span></div><input type="range" class="cst-s" min="5" max="30" value="5" id="w5" oninput="update()"></div>
-        <div class="dim"><div class="dim-top"><span class="dim-name">Termini de retorn</span><span class="dim-pct cst-bg" id="w6d">10%</span></div><input type="range" class="cst-s" min="5" max="30" value="10" id="w6" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Disponibilitat de recursos</span><span class="dim-pct cst-bg" id="w4d">10%</span></div><div class="dim-hint">Es pot fer amb l'equip i les eines actuals</div><input type="range" class="cst-s" min="5" max="30" value="10" id="w4" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Esforç i complexitat</span><span class="dim-pct cst-bg" id="w5d">5%</span></div><div class="dim-hint">Dedicació i dificultat tècnica d'implementació</div><input type="range" class="cst-s" min="5" max="30" value="5" id="w5" oninput="update()"></div>
+        <div class="dim"><div class="dim-top"><span class="dim-name">Termini de retorn</span><span class="dim-pct cst-bg" id="w6d">10%</span></div><div class="dim-hint">Quan es fan visibles els resultats per a l'usuari</div><input type="range" class="cst-s" min="5" max="30" value="10" id="w6" oninput="update()"></div>
 
         <div class="weight-total">
           <span class="weight-total-label">Distribució valor / cost</span>
@@ -505,7 +507,7 @@ const velIcon = {
   lng:`<svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>`
 };
 
-const dLabels = ['Impacte','Mesurabilitat','Prioritat','Assequibilitat','Cost-esforç','Retorn'];
+const dLabels = ['Usuaris','Experiència','Encaix CTTI','Recursos','Esforç','Retorn'];
 const defaults = [30,20,25,10,5,10];
 
 function resetWeights() { defaults.forEach((v,i)=>{ document.getElementById(`w${i+1}`).value=v; }); update(); }
